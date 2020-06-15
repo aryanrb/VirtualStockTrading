@@ -54,11 +54,6 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
         btnSell.setOnClickListener(this);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-    }
 
     private void getCompanyDetail(){
         MarketAPI companyAPI = RetrofitUrl.getInstance().create(MarketAPI.class);
@@ -99,8 +94,6 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
     }
 
     private void buyShares(){
-//        MainActivity main = new MainActivity();
-//        UserModel user = main.getUserProfile();
 
         TradeModel trade = new TradeModel(selectedCompany.get_id(), user1.get_id(), "buying", "Buy a share", "complete", Calendar.getInstance().getTime(), 0, 0, Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice());
 
@@ -125,7 +118,6 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
 
         checkPortfolio(user1.get_id());
 
-
     }
 
     public void checkPortfolio(String userId){
@@ -140,13 +132,11 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
                     return;
                 }
 
-                 response.body().getShareBalance();
-                if(response.body().getShareBalance() == 0){
-                    newPortfolio(user1.get_id());
-
-                }
-                else if(response.body().getShareBalance() > 0){
+                if(response.body() != null) {
                     editPortfolio(user1.get_id(), response.body().getShareBalance());
+                }
+                else {
+                    newPortfolio(user1.get_id());
                 }
 
             }
@@ -171,7 +161,6 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
                     Toast.makeText(CompanyDetailActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                etStockQty.setText("1");
 
             }
 
@@ -196,7 +185,6 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
                     Toast.makeText(CompanyDetailActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                etStockQty.setText("2");
 
             }
 
@@ -207,6 +195,7 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
         });
 
     }
+
     private void sellShares(){
 
     }

@@ -14,14 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.aryan.virtualtrading.R;
-import com.aryan.virtualtrading.activities.MainActivity;
-import com.aryan.virtualtrading.fragments.CompanyListFragment;
 import com.aryan.virtualtrading.models.MarketModel;
 
 import java.util.List;
 
 
-public class MarketListAdapter extends RecyclerView.Adapter<MarketListAdapter.MatchFixtureViewHolder> {
+public class MarketListAdapter extends RecyclerView.Adapter<MarketListAdapter.MarketListViewHolder> {
 
     private NotificationManagerCompat notificationManagerCompat;
     OnCompanyListener mCompanyListener;
@@ -37,22 +35,22 @@ public class MarketListAdapter extends RecyclerView.Adapter<MarketListAdapter.Ma
 
     @NonNull
     @Override
-    public MatchFixtureViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MarketListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.portfolio_stock, parent, false);
         notificationManagerCompat = NotificationManagerCompat.from(mContext);
 
-        return new MatchFixtureViewHolder(view, mCompanyListener);
+        return new MarketListViewHolder(view, mCompanyListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MatchFixtureViewHolder holder, int position) {
-        final MarketModel fixture = marketList.get(position);
+    public void onBindViewHolder(@NonNull MarketListViewHolder holder, int position) {
+        final MarketModel market = marketList.get(position);
 
-        holder.valueamt.setText(fixture.getSharePrice() + "");
-        holder.nameofcompany.setText(fixture.getName());
-        holder.markettype.setText(fixture.getSymbol());
+        holder.valueamt.setText(market.getSharePrice() + "");
+        holder.nameofcompany.setText(market.getName());
+        holder.markettype.setText(market.getSymbol());
     }
 
 
@@ -62,13 +60,13 @@ public class MarketListAdapter extends RecyclerView.Adapter<MarketListAdapter.Ma
         return marketList.size();
     }
 
-    public class MatchFixtureViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class MarketListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView valueamt, nameofcompany, markettype;
         CardView details_card;
         OnCompanyListener onCompanyListener;
 
-        public MatchFixtureViewHolder(@NonNull View itemView, OnCompanyListener onCompanyListener) {
+        public MarketListViewHolder(@NonNull View itemView, OnCompanyListener onCompanyListener) {
             super(itemView);
             valueamt = itemView.findViewById(R.id.valueamt);
             nameofcompany = itemView.findViewById(R.id.nameofcompany);
