@@ -1,5 +1,6 @@
 package com.aryan.virtualtrading.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aryan.virtualtrading.R;
 import com.aryan.virtualtrading.RetrofitUrl;
+import com.aryan.virtualtrading.activities.CompanyDetailActivity;
 import com.aryan.virtualtrading.adapters.MarketListAdapter;
 import com.aryan.virtualtrading.api.MarketAPI;
 import com.aryan.virtualtrading.models.MarketModel;
@@ -23,7 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MarketFragment extends Fragment {
+public class MarketFragment extends Fragment implements MarketListAdapter.OnCompanyListener {
 
     private RecyclerView rvMarket;
 
@@ -33,6 +35,8 @@ public class MarketFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_market, container, false);
         rvMarket = root.findViewById(R.id.stockListView);
         getMarket();
+
+
         return root;
     }
 
@@ -49,7 +53,7 @@ public class MarketFragment extends Fragment {
                     return;
                 }
                 List<MarketModel> list = response.body();
-                MarketListAdapter adapter = new MarketListAdapter(list, getContext());
+                MarketListAdapter adapter = new MarketListAdapter(list, getContext(), MarketFragment.this);
                 rvMarket.setAdapter(adapter);
                 rvMarket.setLayoutManager(new LinearLayoutManager(getContext()));
             }
@@ -60,5 +64,12 @@ public class MarketFragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onCompanyClick(int position, String id) {
+        Intent intent = new Intent(getContext(), CompanyDetailActivity.class);
+        intent.putExtra("companyidfordetail", id);
+        startActivity(intent);
     }
 }

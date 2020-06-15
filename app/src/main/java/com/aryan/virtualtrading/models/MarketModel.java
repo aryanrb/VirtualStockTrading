@@ -2,10 +2,20 @@ package com.aryan.virtualtrading.models;
 
 public class MarketModel {
 
-    private String name, symbol;
+    private String _id, name, symbol;
     private float sharePrice, eps, peRatio;
     private double capital,outShares;
 
+    public MarketModel(String _id, String name, String symbol, float sharePrice, float eps, float peRatio, double capital, double outShares) {
+        this._id = _id;
+        this.name = name;
+        this.symbol = symbol;
+        this.sharePrice = sharePrice;
+        this.eps = eps;
+        this.peRatio = peRatio;
+        this.capital = capital;
+        this.outShares = outShares;
+    }
 
     public MarketModel(String name, String symbol, float sharePrice) {
         this.name = name;
@@ -21,6 +31,14 @@ public class MarketModel {
         this.peRatio = peRatio;
         this.capital = capital;
         this.outShares = outShares;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getName() {

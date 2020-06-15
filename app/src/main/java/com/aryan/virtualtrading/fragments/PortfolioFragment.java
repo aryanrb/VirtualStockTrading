@@ -11,11 +11,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.aryan.virtualtrading.activities.CompanyDetailActivity;
 import com.aryan.virtualtrading.api.MarketAPI;
 import com.aryan.virtualtrading.adapters.MarketListAdapter;
+import com.aryan.virtualtrading.api.PortfolioAPI;
 import com.aryan.virtualtrading.models.MarketModel;
 import com.aryan.virtualtrading.R;
 import com.aryan.virtualtrading.RetrofitUrl;
+import com.aryan.virtualtrading.models.PortfolioModel;
 
 import java.util.List;
 
@@ -23,7 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PortfolioFragment extends Fragment {
+public class PortfolioFragment extends Fragment implements MarketListAdapter.OnCompanyListener {
 
     private RecyclerView rvMarket;
 
@@ -50,7 +53,7 @@ public class PortfolioFragment extends Fragment {
                     return;
                 }
                 List<MarketModel> list = response.body();
-                MarketListAdapter adapter = new MarketListAdapter(list, getContext());
+                MarketListAdapter adapter = new MarketListAdapter(list, getContext(), PortfolioFragment.this);
                 rvMarket.setAdapter(adapter);
                 rvMarket.setLayoutManager(new LinearLayoutManager(getContext()));
             }
@@ -60,6 +63,36 @@ public class PortfolioFragment extends Fragment {
                 Toast.makeText(getContext(), "Error loading fixtures" , Toast.LENGTH_SHORT).show();
             }
         });
+
+    }
+
+//    public void checkPortfolio(String userId){
+//        PortfolioAPI portfolioAPI = RetrofitUrl.getInstance().create(PortfolioAPI.class);
+//        Call<PortfolioModel> portfolioCall = portfolioAPI.getMyPortfolioCo(RetrofitUrl.token, userId, companyId);
+//
+//        portfolioCall.enqueue(new Callback<PortfolioModel>() {
+//            @Override
+//            public void onResponse(Call<PortfolioModel> call, Response<PortfolioModel> response) {
+//                if (!response.isSuccessful()) {
+//                    Toast.makeText(getContext(), "Code " + response.code(), Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                doIHave = response.body().getShareBalance();
+//
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<PortfolioModel> call, Throwable t) {
+//                Toast.makeText(getContext(), t.getLocalizedMessage() + "error", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
+//    }
+
+    @Override
+    public void onCompanyClick(int position, String name) {
 
     }
 }

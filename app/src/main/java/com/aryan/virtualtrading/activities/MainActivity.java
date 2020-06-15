@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity{
 
     //Creating user object for easy access from all fragments
     public static UserModel userProfile;
+    public static boolean mar = true;
     private AppBarConfiguration mAppBarConfiguration;
     String name;
     TextView navUserProfile, navUsername, navUserBalance;
@@ -112,7 +113,14 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
-//    @Override
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUserProfile();
+
+    }
+
+    //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        switch (requestCode) {
 //            case RESULT_PROFILE_ACTIVITY:
@@ -153,7 +161,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     //Getting logged in user profile
-    public void getUserProfile(){
+    public UserModel getUserProfile(){
 
         UserAPI userAPI = RetrofitUrl.getInstance().create(UserAPI.class);
         Call<UserModel> usersCall = userAPI.getUserProfile(RetrofitUrl.token);
@@ -175,6 +183,7 @@ public class MainActivity extends AppCompatActivity{
 
             }
         });
+        return userProfile;
     }
 
     public void showdetail(String name){
