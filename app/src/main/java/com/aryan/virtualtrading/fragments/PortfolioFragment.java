@@ -11,13 +11,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aryan.virtualtrading.activities.CompanyDetailActivity;
 import com.aryan.virtualtrading.activities.MainActivity;
 import com.aryan.virtualtrading.adapters.PortfolioListAdapter;
-import com.aryan.virtualtrading.api.MarketAPI;
 import com.aryan.virtualtrading.adapters.MarketListAdapter;
 import com.aryan.virtualtrading.api.PortfolioAPI;
-import com.aryan.virtualtrading.models.MarketModel;
 import com.aryan.virtualtrading.R;
 import com.aryan.virtualtrading.RetrofitUrl;
 import com.aryan.virtualtrading.models.PortfolioModel;

@@ -34,10 +34,11 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
     private String companyId = "";
     UserModel user1 = MainActivity.userProfile;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_company_detail);
+        setContentView(R.layout.activity_company_detail);
 
         tvCompanyName = findViewById(R.id.tvCompanyName);
         tvCompanySymbol = findViewById(R.id.tvCompanySymbol);

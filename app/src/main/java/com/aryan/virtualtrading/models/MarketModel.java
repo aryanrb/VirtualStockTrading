@@ -3,14 +3,15 @@ package com.aryan.virtualtrading.models;
 public class MarketModel {
 
     private String _id, name, symbol;
-    private float sharePrice, eps, peRatio;
+    private float sharePrice, lastPrice, eps, peRatio;
     private double capital,outShares;
 
-    public MarketModel(String _id, String name, String symbol, float sharePrice, float eps, float peRatio, double capital, double outShares) {
+    public MarketModel(String _id, String name, String symbol, float sharePrice, float lastPrice, float eps, float peRatio, double capital, double outShares) {
         this._id = _id;
         this.name = name;
         this.symbol = symbol;
         this.sharePrice = sharePrice;
+        this.lastPrice = lastPrice;
         this.eps = eps;
         this.peRatio = peRatio;
         this.capital = capital;
@@ -23,10 +24,11 @@ public class MarketModel {
         this.sharePrice = sharePrice;
     }
 
-    public MarketModel(String name, String symbol, float sharePrice, float eps, float peRatio, double capital, double outShares) {
+    public MarketModel(String name, String symbol, float sharePrice, float lastPrice, float eps, float peRatio, double capital, double outShares) {
         this.name = name;
         this.symbol = symbol;
         this.sharePrice = sharePrice;
+        this.lastPrice = lastPrice;
         this.eps = eps;
         this.peRatio = peRatio;
         this.capital = capital;
@@ -63,6 +65,14 @@ public class MarketModel {
 
     public void setSharePrice(float sharePrice) {
         this.sharePrice = sharePrice;
+    }
+
+    public float getLastPrice() {
+        return lastPrice;
+    }
+
+    public void setLastPrice(float lastPrice) {
+        this.lastPrice = lastPrice;
     }
 
     public float getEps() {

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aryan.virtualtrading.R;
 import com.aryan.virtualtrading.models.MarketModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -51,18 +52,21 @@ public class MarketListAdapter extends RecyclerView.Adapter<MarketListAdapter.Ma
         holder.valueamt.setText(market.getSharePrice() + "");
         holder.nameofcompany.setText(market.getName());
         holder.markettype.setText(market.getSymbol());
+        holder.tvPerChange.setText(market.getEps() + "%");
     }
-
-
 
     @Override
     public int getItemCount() {
         return marketList.size();
     }
 
+    public void filterCompany(ArrayList<MarketModel> list){
+        marketList = list;
+        notifyDataSetChanged();
+    }
     public class MarketListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        TextView valueamt, nameofcompany, markettype;
+        TextView valueamt, nameofcompany, markettype, tvPerChange;
         CardView details_card;
         OnCompanyListener onCompanyListener;
 
@@ -72,6 +76,7 @@ public class MarketListAdapter extends RecyclerView.Adapter<MarketListAdapter.Ma
             nameofcompany = itemView.findViewById(R.id.nameofcompany);
             markettype = itemView.findViewById(R.id.tv_symbol);
             details_card = itemView.findViewById(R.id.details_card);
+            tvPerChange = itemView.findViewById(R.id.tvPerChange);
             this.onCompanyListener = onCompanyListener;
 
             itemView.setOnClickListener(this);

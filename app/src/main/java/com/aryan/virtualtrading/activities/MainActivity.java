@@ -1,24 +1,28 @@
 package com.aryan.virtualtrading.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import com.aryan.virtualtrading.GetUserCallback;
 import com.aryan.virtualtrading.R;
 import com.aryan.virtualtrading.RetrofitUrl;
 import com.aryan.virtualtrading.UserRequest;
+import com.aryan.virtualtrading.api.BalanceAPI;
 import com.aryan.virtualtrading.api.UserAPI;
 import com.aryan.virtualtrading.fragments.HomeFragment;
 import com.aryan.virtualtrading.fragments.LeaderboardFragment;
 import com.aryan.virtualtrading.fragments.PortfolioFragment;
+import com.aryan.virtualtrading.models.BalanceModel;
 import com.aryan.virtualtrading.models.UserModel;
 import com.facebook.AccessToken;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
@@ -43,13 +47,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuItemClickListener{
 
     //Creating user object for easy access from all fragments
     public static UserModel userProfile;
-    public static boolean mar = true;
+    public static BalanceModel userBalance;
     private AppBarConfiguration mAppBarConfiguration;
-    String name;
+    DrawerLayout drawer;
     TextView navUserProfile, navUsername, navUserBalance;
 
 //    public static UserModel currentUser;
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity{
                         .setAction("Action", null).show();
             }
         });
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         //nav header views
         View headerView = navigationView.getHeaderView(0);
@@ -103,20 +108,14 @@ public class MainActivity extends AppCompatActivity{
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_market, R.id.nav_portfolio,
-                R.id.nav_leaderboard, R.id.nav_share, R.id.nav_logout)
+                R.id.nav_leaderboard, R.id.nav_history, R.id.nav_share, R.id.nav_logout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getUserProfile();
+        navigationView.getMenu().findItem(R.id.nav_logout).setOnMenuItemClickListener(this);
 
     }
 
@@ -175,6 +174,7 @@ public class MainActivity extends AppCompatActivity{
                 }
                 userProfile = response.body();
                 showdetail(userProfile.getFullName());
+                getBalanceDetail(userProfile.get_id());
             }
 
             @Override
@@ -186,10 +186,69 @@ public class MainActivity extends AppCompatActivity{
         return userProfile;
     }
 
+    public void getBalanceDetail(final String id){
+        BalanceAPI balanceAPI = RetrofitUrl.getInstance().create(BalanceAPI.class);
+        Call<BalanceModel> balanceCall = balanceAPI.getBalanceDetail(RetrofitUrl.token, id);
+
+        balanceCall.enqueue(new Callback<BalanceModel>() {
+            @Override
+            public void onResponse(Call<BalanceModel> call, Response<BalanceModel> response) {
+                if(!response.isSuccessful()){
+                    Toast.makeText(MainActivity.this, "Code:" + response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                userBalance = response.body();
+                if(userBalance == null){
+                    createBalance(id);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<BalanceModel> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Error "+ t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void createBalance(String id){
+        BalanceModel model = new BalanceModel(100000f, 100000f, 100000f, 0f, id);
+        BalanceAPI balanceAPI = RetrofitUrl.getInstance().create(BalanceAPI.class);
+        Call<Void> balanceCall = balanceAPI.createBalance(RetrofitUrl.token, model);
+
+        balanceCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!response.isSuccessful()){
+                    Toast.makeText(MainActivity.this, "Code: " + response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Error: " + t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public void showdetail(String name){
         //Changing the content of nav header
         navUserProfile.setText(name.charAt(0)+ "");
         navUsername.setText(name+"");
         navUserBalance.setText("Rs. 1000000000000");
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if(item.getItemId() == R.id.nav_logout){
+            Intent intent = new Intent(this, LoginActivity.class);
+            RetrofitUrl.token = "Bearer ";
+            startActivity(intent);
+            finish();
+        }
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

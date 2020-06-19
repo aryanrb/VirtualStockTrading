@@ -4,6 +4,225 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.CompanyDetailActivity">
+    android:background="#fff">
 
+    <TextView
+        android:id="@+id/tvCompanyName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Agriculture Development Bank Ltd."
+        app:layout_constraintStart_toStartOf="@+id/tvCompanySymbol"
+        app:layout_constraintTop_toBottomOf="@+id/tvCompanySymbol" />
+
+    <TextView
+        android:id="@+id/tvCompanySymbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="monospace"
+        android:text="ADBL"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSharePrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-light"
+        android:textColor="#000"
+        android:text="341.26"
+        android:textSize="50sp"
+        app:layout_constraintStart_toStartOf="@+id/tvCompanyName"
+        app:layout_constraintTop_toBottomOf="@+id/tvCompanyName" />
+
+    <Button
+        android:id="@+id/btnBuy"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="28dp"
+        android:fontFamily="monospace"
+        android:background="#4DEA48"
+        android:textColor="#fff"
+        android:textSize="23sp"
+        android:text="Buy"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSharePrice" />
+
+    <Button
+        android:id="@+id/btnSell"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:fontFamily="monospace"
+        android:background="#FB2251"
+        android:textColor="#fff"
+        android:textSize="23sp"
+        android:text="Sell"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/btnBuy" />
+
+    <EditText
+        android:id="@+id/etStockQty"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="24dp"
+        android:textAlignment="center"
+        android:ems="10"
+        android:maxLength="7"
+        android:fontFamily="monospace"
+        android:inputType="number"
+        android:singleLine="true"
+        android:text="10"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnBuy" />
+
+    <TextView
+        android:id="@+id/tvTradeQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="18sp"
+        android:layout_marginStart="10dp"
+        android:text="Enter trade quantity"
+        app:layout_constraintBottom_toBottomOf="@+id/etStockQty"
+        app:layout_constraintStart_toEndOf="@+id/etStockQty"
+        app:layout_constraintTop_toTopOf="@+id/etStockQty" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="70dp"
+        android:textColor="#000"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Stats"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etStockQty" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textSize="20dp"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Volume"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/tvVolumeValue"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="1000000"
+        android:layout_marginLeft="10dp"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
+        app:layout_constraintTop_toTopOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Capital"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/tvCapitalValue"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="1000000"
+        android:layout_marginLeft="10dp"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toTopOf="@+id/textView7" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="EPS"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <TextView
+        android:id="@+id/tvEpsValue"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_marginStart="10dp"
+        android:text="12.00"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-condensed"
+        android:text="P/E Ratio"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+    <TextView
+        android:id="@+id/tvPeRatioValue"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="45.00"
+        android:layout_marginStart="10dp"
+        android:textAllCaps="true"
+        android:textColor="#000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintTop_toTopOf="@+id/textView9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 </androidx.constraintlayout.widget.ConstraintLayout>
