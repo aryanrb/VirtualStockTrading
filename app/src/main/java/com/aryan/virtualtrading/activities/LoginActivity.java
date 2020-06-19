@@ -2,7 +2,9 @@ package com.aryan.virtualtrading.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText etPhone, etPassword;
     Button btnLogin;
+    SharedPreferences sharedPreferences;
 
     //with fb
 //    private static final String EMAIL = "email";
@@ -45,6 +48,14 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
 //        LoginButton mLoginButton = findViewById(R.id.fblogin_button);
 
+        SharedPreferences savedData = getSharedPreferences("User", Context.MODE_PRIVATE);
+        if(!savedData.getString("phone", "").isEmpty()){
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            RetrofitUrl.token = savedData.getString("token", "");
+            startActivity(intent);
+            finish();
+
+        }
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                     RetrofitUrl.token += response.body().getToken();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
+                    saveUser();
                     finish();
 
                 }
@@ -109,6 +121,17 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
+
+    public void saveUser(){
+        sharedPreferences = getSharedPreferences("User", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("phone", etPhone.getText().toString());
+        editor.putString("password", etPassword.getText().toString());
+        editor.putString("token", RetrofitUrl.token);
+        editor.apply();
+    }
+
 
     public Boolean validInput(String phone, String password){
         if(password.trim().equals("")){

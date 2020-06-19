@@ -1,6 +1,7 @@
 package com.aryan.virtualtrading.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.aryan.virtualtrading.GetUserCallback;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
     private AppBarConfiguration mAppBarConfiguration;
     DrawerLayout drawer;
     TextView navUserProfile, navUsername, navUserBalance;
+    SharedPreferences sharedPreferences;
 
 //    public static UserModel currentUser;
 //    //New changes
@@ -201,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
                 if(userBalance == null){
                     createBalance(id);
                 }
+                showAmt(userBalance.getvCoinBalance());
 
             }
 
@@ -237,7 +240,10 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
         //Changing the content of nav header
         navUserProfile.setText(name.charAt(0)+ "");
         navUsername.setText(name+"");
-        navUserBalance.setText("Rs. 1000000000000");
+    }
+
+    public void showAmt(float amt){
+        navUserBalance.setText("NRs. "+amt);
     }
 
     @Override
@@ -245,10 +251,16 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
         if(item.getItemId() == R.id.nav_logout){
             Intent intent = new Intent(this, LoginActivity.class);
             RetrofitUrl.token = "Bearer ";
+            deleteSavedUser();
             startActivity(intent);
             finish();
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void deleteSavedUser(){
+        sharedPreferences = getSharedPreferences("User", 0);
+        sharedPreferences.edit().clear().commit();
     }
 }
