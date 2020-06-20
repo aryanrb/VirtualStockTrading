@@ -12,9 +12,11 @@ import android.widget.Toast;
 
 import com.aryan.virtualtrading.R;
 import com.aryan.virtualtrading.RetrofitUrl;
+import com.aryan.virtualtrading.api.BalanceAPI;
 import com.aryan.virtualtrading.api.MarketAPI;
 import com.aryan.virtualtrading.api.PortfolioAPI;
 import com.aryan.virtualtrading.api.TradeAPI;
+import com.aryan.virtualtrading.models.BalanceModel;
 import com.aryan.virtualtrading.models.MarketModel;
 import com.aryan.virtualtrading.models.PortfolioModel;
 import com.aryan.virtualtrading.models.TradeModel;
@@ -33,6 +35,7 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
     private MarketModel selectedCompany;
     private String companyId = "";
     UserModel user1 = MainActivity.userProfile;
+    BalanceModel balance = MainActivity.userBalance;
 
 
     @Override
@@ -97,28 +100,31 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
     private void buyShares(){
 
         TradeModel trade = new TradeModel(selectedCompany.get_id(), user1.get_id(), "buying", "Buy a share", "complete", Calendar.getInstance().getTime(), 0, 0, Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice());
+        if(checkBalance(Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice())) {
+            TradeAPI tradeAPI = RetrofitUrl.getInstance().create(TradeAPI.class);
+            Call<Void> tradeCall = tradeAPI.addTrade(RetrofitUrl.token, trade);
 
-        TradeAPI tradeAPI = RetrofitUrl.getInstance().create(TradeAPI.class);
-        Call<Void> tradeCall = tradeAPI.addTrade(RetrofitUrl.token, trade);
-
-        tradeCall.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (!response.isSuccessful()) {
-                    Toast.makeText(CompanyDetailActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
-                    return;
+            tradeCall.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (!response.isSuccessful()) {
+                        Toast.makeText(CompanyDetailActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    manageBalance(Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice());
+                    Toast.makeText(CompanyDetailActivity.this, "Bought successully", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(CompanyDetailActivity.this, "Bought successully", Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(CompanyDetailActivity.this, t.getLocalizedMessage() + "error", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        checkPortfolio(user1.get_id());
-
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(CompanyDetailActivity.this, t.getLocalizedMessage() + "error", Toast.LENGTH_SHORT).show();
+                }
+            });
+            checkPortfolio(user1.get_id());
+        }
+        else{
+            Toast.makeText(this, "Sorry, Balance not enough!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void checkPortfolio(String userId){
@@ -195,6 +201,36 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
             }
         });
 
+    }
+    
+    public boolean checkBalance(int qty, float amt){
+        if(balance.getvCoinBalance() < qty*amt){
+            return false;
+        }
+        return true;
+    }
+
+    public void manageBalance(int q, float a){
+        BalanceModel updatedBalance = new BalanceModel(balance.getInitialVCoin(), balance.getvCoinBalance() - (q*a), balance.getTotalValue(), balance.getvCoinInvested() + (q*a));
+        BalanceAPI balanceAPI = RetrofitUrl.getInstance().create(BalanceAPI.class);
+        Call<Void> balanceCall = balanceAPI.updateBalance(RetrofitUrl.token, user1.get_id(), updatedBalance);
+
+        balanceCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(!response.isSuccessful())
+                {
+                    Toast.makeText(CompanyDetailActivity.this, "Error loading balance "+ response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(CompanyDetailActivity.this, "Error loading balance "+ t.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void sellShares(){

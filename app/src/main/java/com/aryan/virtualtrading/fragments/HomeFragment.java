@@ -1,6 +1,7 @@
 package com.aryan.virtualtrading.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,7 @@ public class HomeFragment extends Fragment{
 
     RecyclerView rvTopInvestments;
     private List<PortfolioModel> portfolioList;
-    UserModel user = MainActivity.userProfile;
+    public UserModel user = MainActivity.userProfile;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -38,34 +39,11 @@ public class HomeFragment extends Fragment{
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         rvTopInvestments = root.findViewById(R.id.rvTopInvestments);
-//        getUserProfile();
 //        getPortfolio();
 
         return root;
     }
 
-    public void getUserProfile(){
-
-        UserAPI userAPI = RetrofitUrl.getInstance().create(UserAPI.class);
-        Call<UserModel> usersCall = userAPI.getUserProfile(RetrofitUrl.token);
-
-        usersCall.enqueue(new Callback<UserModel>() {
-            @Override
-            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if(!response.isSuccessful()){
-                    Toast.makeText(getContext(), "Error loading profile!!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                user = response.body();
-            }
-
-            @Override
-            public void onFailure(Call<UserModel> call, Throwable t) {
-                Toast.makeText(getContext(), "Error loading profile...", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
 
     private void getPortfolio() {
 

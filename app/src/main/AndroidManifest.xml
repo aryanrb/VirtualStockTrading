@@ -16,9 +16,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".activities.CompanyDetailActivity"/>
-        <activity android:name=".activities.SplashScreen" />
-        <activity android:name=".activities.LoginActivity">
+        <activity android:name=".activities.CompanyDetailActivity"
+                android:screenOrientation="nosensor"/>
+        <activity android:name=".activities.SplashScreen"
+            android:screenOrientation="nosensor"/>
+        <activity android:name=".activities.LoginActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +31,8 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="nosensor"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

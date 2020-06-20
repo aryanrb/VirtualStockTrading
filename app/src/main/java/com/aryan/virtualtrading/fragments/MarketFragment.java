@@ -2,6 +2,7 @@ package com.aryan.virtualtrading.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -79,6 +80,7 @@ public class MarketFragment extends Fragment implements MarketListAdapter.OnComp
                 mAdapter = new MarketListAdapter(list, getContext(), MarketFragment.this);
                 rvMarket.setAdapter(mAdapter);
                 rvMarket.setLayoutManager(new LinearLayoutManager(getContext()));
+                refresh(5000);
             }
 
             @Override
@@ -105,6 +107,18 @@ public class MarketFragment extends Fragment implements MarketListAdapter.OnComp
             }
         }
         mAdapter.filterCompany(filterList);
+    }
 
+    //for refreshing the activity every 5 second
+    public void refresh(int milliseconds){
+        final Handler handler = new Handler();
+
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                getMarket();
+            }
+        };
+        handler.postDelayed(runnable, milliseconds);
     }
 }

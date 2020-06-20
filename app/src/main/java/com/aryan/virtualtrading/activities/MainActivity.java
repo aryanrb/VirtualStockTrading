@@ -19,6 +19,7 @@ import com.facebook.AccessToken;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Did you just clicked here", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -177,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
                 userProfile = response.body();
                 showdetail(userProfile.getFullName());
                 getBalanceDetail(userProfile.get_id());
+                refresh(5000);
             }
 
             @Override
@@ -262,5 +264,18 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
     public void deleteSavedUser(){
         sharedPreferences = getSharedPreferences("User", 0);
         sharedPreferences.edit().clear().commit();
+    }
+
+    //for refreshing the activity every 5 second
+    public void refresh(int milliseconds){
+        final Handler handler = new Handler();
+
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                getUserProfile();
+            }
+        };
+        handler.postDelayed(runnable, milliseconds);
     }
 }

@@ -22,6 +22,13 @@ public class BalanceModel {
         this.acHolder = acHolder;
     }
 
+    public BalanceModel(float initialVCoin, float vCoinBalance, float totalValue, float vCoinInvested) {
+        this.initialVCoin = initialVCoin;
+        this.vCoinBalance = vCoinBalance;
+        this.totalValue = totalValue;
+        this.vCoinInvested = vCoinInvested;
+    }
+
     public float getInitialVCoin() {
         return initialVCoin;
     }

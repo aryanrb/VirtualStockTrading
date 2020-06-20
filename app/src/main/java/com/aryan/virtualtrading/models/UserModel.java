@@ -11,6 +11,9 @@ public class UserModel {
 //    private String permissions;
 
 
+    public UserModel() {
+    }
+
     public UserModel(String _id, String fullName, String username, String admin, String password, long phone) {
         this._id = _id;
         this.fullName = fullName;
