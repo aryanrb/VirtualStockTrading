@@ -16,6 +16,7 @@ import com.aryan.virtualtrading.fragments.PortfolioFragment;
 import com.aryan.virtualtrading.models.BalanceModel;
 import com.aryan.virtualtrading.models.UserModel;
 import com.facebook.AccessToken;
+import com.facebook.login.Login;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -87,6 +88,13 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
         navUserProfile = (TextView) headerView.findViewById(R.id.tv_profile);
         navUsername = (TextView) headerView.findViewById(R.id.profileName);
         navUserBalance = (TextView) headerView.findViewById(R.id.balance);
+
+        if(RetrofitUrl.token.equals("Bearer ")){
+            Intent backtoLogin = new Intent(this, LoginActivity.class);
+            startActivity(backtoLogin);
+            deleteSavedUser();
+            finish();
+        }
 
         getUserProfile();
 
@@ -252,9 +260,9 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
     public boolean onMenuItemClick(MenuItem item) {
         if(item.getItemId() == R.id.nav_logout){
             Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
             RetrofitUrl.token = "Bearer ";
             deleteSavedUser();
-            startActivity(intent);
             finish();
         }
         drawer.closeDrawer(GravityCompat.START);
@@ -278,4 +286,5 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
         };
         handler.postDelayed(runnable, milliseconds);
     }
+
 }

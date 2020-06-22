@@ -29,7 +29,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CompanyDetailActivity extends AppCompatActivity implements View.OnClickListener{
-    private TextView tvCompanyName, tvCompanySymbol, tvSharePrice;
+    private TextView tvCompanyName, tvCompanySymbol, tvSharePrice, tvVolumeValue, tvCapitalValue, tvEpsValue, tvPeRatioValue;
     private EditText etStockQty;
     private Button btnBuy, btnSell;
     private MarketModel selectedCompany;
@@ -49,6 +49,11 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
         etStockQty = findViewById(R.id.etStockQty);
         btnBuy = findViewById(R.id.btnBuy);
         btnSell = findViewById(R.id.btnSell);
+
+        tvVolumeValue = findViewById(R.id.tvVolumeValue);
+        tvCapitalValue = findViewById(R.id.tvCapitalValue);
+        tvEpsValue = findViewById(R.id.tvEpsValue);
+        tvPeRatioValue = findViewById(R.id.tvPeRatioValue);
 
         Intent intent = getIntent();
         companyId = intent.getStringExtra("companyidfordetail");
@@ -74,6 +79,10 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
                 tvCompanyName.setText(selectedCompany.getName());
                 tvCompanySymbol.setText(selectedCompany.getSymbol());
                 tvSharePrice.setText(selectedCompany.getSharePrice() + "");
+                tvVolumeValue.setText(selectedCompany.getOutShares() + "");
+                tvCapitalValue.setText(selectedCompany.getCapital() + "");
+                tvEpsValue.setText(selectedCompany.getEps() + "");
+                tvPeRatioValue.setText(selectedCompany.getPeRatio() + "");
             }
 
             @Override

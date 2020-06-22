@@ -1,7 +1,6 @@
 package com.aryan.virtualtrading.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,28 +26,50 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment {
 
     RecyclerView rvTopInvestments;
     private List<PortfolioModel> portfolioList;
-    public UserModel user = MainActivity.userProfile;
+    public UserModel user;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-
         rvTopInvestments = root.findViewById(R.id.rvTopInvestments);
-//        getPortfolio();
+        getUserProfile();
 
         return root;
     }
 
+    public void getUserProfile(){
 
-    private void getPortfolio() {
+        UserAPI userAPI = RetrofitUrl.getInstance().create(UserAPI.class);
+        Call<UserModel> usersCall = userAPI.getUserProfile(RetrofitUrl.token);
+
+        usersCall.enqueue(new Callback<UserModel>() {
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if(!response.isSuccessful()){
+                    Toast.makeText(getContext(), "Error loading profile!!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                user = response.body();
+                getPortfolio(user.get_id());
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                Toast.makeText(getContext(), "Error loading profile...", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    private void getPortfolio(String id) {
 
         PortfolioAPI portfolioAPI  = RetrofitUrl.getInstance().create(PortfolioAPI.class);
-        Call<List<PortfolioModel>> portfolioCall = portfolioAPI.getMyPortfolio(RetrofitUrl.token, user.get_id());
+        Call<List<PortfolioModel>> portfolioCall = portfolioAPI.getMyPortfolio(RetrofitUrl.token, id);
 
         portfolioCall.enqueue(new Callback<List<PortfolioModel>>() {
             @Override
@@ -71,4 +92,5 @@ public class HomeFragment extends Fragment{
         });
 
     }
+
 }
