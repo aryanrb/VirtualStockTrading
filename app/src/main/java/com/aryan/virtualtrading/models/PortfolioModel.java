@@ -5,6 +5,8 @@ public class PortfolioModel {
     int shareBalance;
     float boughtPrice, previousPrice, currentPrice;
 
+    public PortfolioModel() {
+    }
 
     public PortfolioModel(String _id, String company, String acHolder, int shareBalance, float boughtPrice, float previousPrice, float currentPrice) {
         this._id = _id;

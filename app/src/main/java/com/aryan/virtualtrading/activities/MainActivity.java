@@ -226,6 +226,7 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
 
     public void createBalance(String id){
         BalanceModel model = new BalanceModel(100000f, 100000f, 100000f, 0f, id);
+        userBalance = model;
         BalanceAPI balanceAPI = RetrofitUrl.getInstance().create(BalanceAPI.class);
         Call<Void> balanceCall = balanceAPI.createBalance(RetrofitUrl.token, model);
 
@@ -236,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
                     Toast.makeText(MainActivity.this, "Code: " + response.code(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-
             }
 
             @Override
