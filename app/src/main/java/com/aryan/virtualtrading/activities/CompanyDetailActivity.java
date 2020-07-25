@@ -120,7 +120,7 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
                         Toast.makeText(CompanyDetailActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    manageBalance(Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice());
+                    manageBalance(Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice(), "buy");
                     Toast.makeText(CompanyDetailActivity.this, "Bought successully", Toast.LENGTH_SHORT).show();
                 }
 
@@ -166,7 +166,7 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
     }
 
     public void editPortfolio(String userId, int lastshares){
-        PortfolioModel portfolio = new PortfolioModel(selectedCompany.get_id(), userId, lastshares + Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice(), selectedCompany.getSharePrice(), selectedCompany.getSharePrice());
+        PortfolioModel portfolio = new PortfolioModel(userId, lastshares + Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice(), selectedCompany.getSharePrice(), selectedCompany.getSharePrice());
         PortfolioAPI portfolioAPI = RetrofitUrl.getInstance().create(PortfolioAPI.class);
         Call<Void> portfolioCall = portfolioAPI.updatePortfolio(RetrofitUrl.token ,userId, selectedCompany.get_id(), portfolio);
 
@@ -189,7 +189,7 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
     }
 
     public void newPortfolio(String userId){
-        PortfolioModel portfolio = new PortfolioModel(selectedCompany.get_id(), userId, Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice(), selectedCompany.getSharePrice(), selectedCompany.getSharePrice());
+        PortfolioModel portfolio = new PortfolioModel(selectedCompany, userId, Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice(), selectedCompany.getSharePrice(), selectedCompany.getSharePrice());
 
         PortfolioAPI portfolioAPI = RetrofitUrl.getInstance().create(PortfolioAPI.class);
         Call<Void> portfolioCall = portfolioAPI.addPortfolio(RetrofitUrl.token, portfolio);
@@ -219,8 +219,13 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
         return true;
     }
 
-    public void manageBalance(int q, float a){
-        BalanceModel updatedBalance = new BalanceModel(balance.getInitialVCoin(), balance.getvCoinBalance() - (q*a), balance.getTotalValue(), balance.getvCoinInvested() + (q*a));
+    public void manageBalance(int q, float a, String status){
+        BalanceModel updatedBalance;
+        if(status.equals("buy"))
+            updatedBalance = new BalanceModel(balance.getInitialVCoin(), balance.getvCoinBalance() - (q*a), balance.getTotalValue(), balance.getvCoinInvested() + (q*a));
+        else
+            updatedBalance = new BalanceModel(balance.getInitialVCoin(), balance.getvCoinBalance() + (q*a), balance.getTotalValue(), balance.getvCoinInvested());
+
         BalanceAPI balanceAPI = RetrofitUrl.getInstance().create(BalanceAPI.class);
         Call<Void> balanceCall = balanceAPI.updateBalance(RetrofitUrl.token, user1.get_id(), updatedBalance);
 
@@ -242,7 +247,94 @@ public class CompanyDetailActivity extends AppCompatActivity implements View.OnC
         });
     }
 
+
     private void sellShares(){
+        TradeModel trade = new TradeModel(selectedCompany.get_id(), user1.get_id(), "selling", "Sold a share", "complete", Calendar.getInstance().getTime(), 0, Integer.parseInt(etStockQty.getText().toString()), 0, selectedCompany.getSharePrice());
+//        if(checkSellingBalance) {
+            TradeAPI tradeAPI = RetrofitUrl.getInstance().create(TradeAPI.class);
+            Call<Void> tradeCall = tradeAPI.addTrade(RetrofitUrl.token, trade);
+
+            tradeCall.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (!response.isSuccessful()) {
+                        Toast.makeText(CompanyDetailActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    manageBalance(Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice(), "sold");
+                    Toast.makeText(CompanyDetailActivity.this, "Sold successully", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(CompanyDetailActivity.this, t.getLocalizedMessage() + "error", Toast.LENGTH_SHORT).show();
+                }
+            });
+            checkPortfolioForSales(user1.get_id(), Integer.parseInt(etStockQty.getText().toString()), selectedCompany.get_id());
+//        }
+//        else{
+//            Toast.makeText(this, "Sorry, Balance not enough!", Toast.LENGTH_SHORT).show();
+//        }
+    }
+
+    public void checkPortfolioForSales(String userId, final int qty, String id){
+        PortfolioAPI portfolioAPI = RetrofitUrl.getInstance().create(PortfolioAPI.class);
+        Call<PortfolioModel> portfolioCall = portfolioAPI.getMyPortfolioCo(RetrofitUrl.token, userId, id);
+
+        portfolioCall.enqueue(new Callback<PortfolioModel>() {
+            @Override
+            public void onResponse(Call<PortfolioModel> call, Response<PortfolioModel> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(CompanyDetailActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(response.body() != null) {
+                    int quantity = response.body().getShareBalance();
+                    if(qty > quantity){
+                        Toast.makeText(CompanyDetailActivity.this, "You don't own much shares to sell", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    else{
+                        deductPortfolio(user1.get_id(), response.body().getShareBalance());
+                    }
+                }
+                else {
+                    Toast.makeText(CompanyDetailActivity.this, "You don't own shares of this company", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<PortfolioModel> call, Throwable t) {
+                Toast.makeText(CompanyDetailActivity.this, t.getLocalizedMessage() + "error", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
+
+    public void deductPortfolio(String userId, int lastshares){
+        PortfolioModel portfolio = new PortfolioModel(userId, lastshares - Integer.parseInt(etStockQty.getText().toString()), selectedCompany.getSharePrice(), selectedCompany.getSharePrice(), selectedCompany.getSharePrice());
+        PortfolioAPI portfolioAPI = RetrofitUrl.getInstance().create(PortfolioAPI.class);
+        Call<Void> portfolioCall = portfolioAPI.updatePortfolio(RetrofitUrl.token ,userId, selectedCompany.get_id(), portfolio);
+
+        portfolioCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(CompanyDetailActivity.this, "Code " + response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(CompanyDetailActivity.this, t.getLocalizedMessage() + "error", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 }

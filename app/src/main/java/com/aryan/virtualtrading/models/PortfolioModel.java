@@ -1,14 +1,15 @@
 package com.aryan.virtualtrading.models;
 
 public class PortfolioModel {
-    String _id, company, acHolder;
+    String _id, acHolder;
+    MarketModel company;
     int shareBalance;
     float boughtPrice, previousPrice, currentPrice;
 
     public PortfolioModel() {
     }
 
-    public PortfolioModel(String _id, String company, String acHolder, int shareBalance, float boughtPrice, float previousPrice, float currentPrice) {
+    public PortfolioModel(String _id, MarketModel company, String acHolder, int shareBalance, float boughtPrice, float previousPrice, float currentPrice) {
         this._id = _id;
         this.company = company;
         this.acHolder = acHolder;
@@ -18,8 +19,16 @@ public class PortfolioModel {
         this.currentPrice = currentPrice;
     }
 
-    public PortfolioModel(String company, String acHolder, int shareBalance, float boughtPrice, float previousPrice, float currentPrice) {
+    public PortfolioModel(MarketModel company, String acHolder, int shareBalance, float boughtPrice, float previousPrice, float currentPrice) {
         this.company = company;
+        this.acHolder = acHolder;
+        this.shareBalance = shareBalance;
+        this.boughtPrice = boughtPrice;
+        this.previousPrice = previousPrice;
+        this.currentPrice = currentPrice;
+    }
+
+    public PortfolioModel(String acHolder, int shareBalance, float boughtPrice, float previousPrice, float currentPrice) {
         this.acHolder = acHolder;
         this.shareBalance = shareBalance;
         this.boughtPrice = boughtPrice;
@@ -35,11 +44,11 @@ public class PortfolioModel {
         this._id = _id;
     }
 
-    public String getCompany() {
+    public MarketModel getCompany() {
         return company;
     }
 
-    public void setCompany(String company) {
+    public void setCompany(MarketModel company) {
         this.company = company;
     }
 

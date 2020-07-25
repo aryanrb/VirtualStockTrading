@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.aryan.virtualtrading.R;
 import com.aryan.virtualtrading.RetrofitUrl;
-import com.aryan.virtualtrading.activities.MainActivity;
 import com.aryan.virtualtrading.adapters.PortfolioListAdapter;
 import com.aryan.virtualtrading.api.BalanceAPI;
 import com.aryan.virtualtrading.api.PortfolioAPI;
@@ -33,12 +32,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment{
 
     RecyclerView rvTopInvestments;
     TextView name, balance, pl, investment;
     private List<PortfolioModel> portfolioList;
     public UserModel user;
+    float totalBalance = 0;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +50,7 @@ public class HomeFragment extends Fragment {
         pl = root.findViewById(R.id.tvProfitLossAmt);
         rvTopInvestments = root.findViewById(R.id.rvTopInvestments);
         getUserProfile();
+
 
         return root;
     }
@@ -69,7 +70,7 @@ public class HomeFragment extends Fragment {
                 user = response.body();
                 name.setText(user.getUsername());
                 getPortfolio(user.get_id());
-                getBalance(user.get_id());
+                getBalance(user);
 
             }
 
@@ -97,9 +98,12 @@ public class HomeFragment extends Fragment {
                 portfolioList = response.body();
                 filterTopInv(portfolioList);
                 List<PortfolioModel> topThreeList = getTopThree(portfolioList);
-                PortfolioListAdapter adapter = new PortfolioListAdapter(topThreeList);
-                rvTopInvestments.setAdapter(adapter);
-                rvTopInvestments.setLayoutManager(new LinearLayoutManager(getContext()));
+                if(topThreeList.size() != 0) {
+                    totalBalance = setBalanceValue(portfolioList);
+                    PortfolioListAdapter adapter = new PortfolioListAdapter(topThreeList);
+                    rvTopInvestments.setAdapter(adapter);
+                    rvTopInvestments.setLayoutManager(new LinearLayoutManager(getContext()));
+                }
 
             }
 
@@ -123,15 +127,28 @@ public class HomeFragment extends Fragment {
 
     private List<PortfolioModel> getTopThree(List<PortfolioModel> list){
         List<PortfolioModel> newList = new ArrayList<>();
-        for(int i=0; i<3; i++){
-            newList.add(list.get(i));
+        if(list.size() == 0){
+            return newList;
+        }
+        else if(list.size() == 1){
+            newList.add(list.get(0));
+        }
+        else if(list.size() == 2) {
+            for (int i = 0; i < 2; i++) {
+                newList.add(list.get(i));
+            }
+        }
+        else if(list.size() > 2) {
+            for (int i = 0; i < 3; i++) {
+                newList.add(list.get(i));
+            }
         }
         return newList;
     }
 
-    private void getBalance(final String id){
+    private void getBalance(final UserModel userModel){
         BalanceAPI balanceAPI = RetrofitUrl.getInstance().create(BalanceAPI.class);
-        Call<BalanceModel> balanceCall = balanceAPI.getBalanceDetail(RetrofitUrl.token, id);
+        Call<BalanceModel> balanceCall = balanceAPI.getBalanceDetail(RetrofitUrl.token, userModel.get_id());
 
         balanceCall.enqueue(new Callback<BalanceModel>() {
             @Override
@@ -142,7 +159,7 @@ public class HomeFragment extends Fragment {
                 }
                 BalanceModel userBalance = response.body();
                 if(userBalance == null){
-                    userBalance = new BalanceModel(100000f, 100000f, 100000f, 0f, id);
+                    userBalance = new BalanceModel(100000f, 100000f, 100000f, 0f, userModel);
 
                 }
                 showAmt(userBalance);
@@ -169,6 +186,14 @@ public class HomeFragment extends Fragment {
     }
 
     public float getProfitLoss(BalanceModel bal){
-        return (bal.getTotalValue() - bal.getInitialVCoin());
+        return (totalBalance + bal.getvCoinBalance() - bal.getInitialVCoin());
+    }
+
+    public float setBalanceValue(List<PortfolioModel> portfolioModelList) {
+        float total = 0;
+        for(PortfolioModel portfolioModel: portfolioModelList){
+            total = (portfolioModel.getCompany().getLastPrice() * portfolioModel.getShareBalance()) + total;
+        }
+        return total;
     }
 }

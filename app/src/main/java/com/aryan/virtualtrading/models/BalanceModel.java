@@ -3,9 +3,10 @@ package com.aryan.virtualtrading.models;
 public class BalanceModel {
 
     float initialVCoin, vCoinBalance, totalValue, vCoinInvested;
-    String _id, acHolder;
+    String _id;
+    UserModel acHolder;
 
-    public BalanceModel(float initialVCoin, float vCoinBalance, float totalValue, float vCoinInvested, String _id, String acHolder) {
+    public BalanceModel(float initialVCoin, float vCoinBalance, float totalValue, float vCoinInvested, String _id, UserModel acHolder) {
         this.initialVCoin = initialVCoin;
         this.vCoinBalance = vCoinBalance;
         this.totalValue = totalValue;
@@ -14,7 +15,7 @@ public class BalanceModel {
         this.acHolder = acHolder;
     }
 
-    public BalanceModel(float initialVCoin, float vCoinBalance, float totalValue, float vCoinInvested, String acHolder) {
+    public BalanceModel(float initialVCoin, float vCoinBalance, float totalValue, float vCoinInvested, UserModel acHolder) {
         this.initialVCoin = initialVCoin;
         this.vCoinBalance = vCoinBalance;
         this.totalValue = totalValue;
@@ -69,11 +70,11 @@ public class BalanceModel {
         this._id = _id;
     }
 
-    public String getAcHolder() {
+    public UserModel getAcHolder() {
         return acHolder;
     }
 
-    public void setAcHolder(String acHolder) {
+    public void setAcHolder(UserModel acHolder) {
         this.acHolder = acHolder;
     }
 }

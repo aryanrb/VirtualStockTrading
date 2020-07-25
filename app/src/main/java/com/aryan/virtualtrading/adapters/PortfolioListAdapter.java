@@ -37,7 +37,7 @@ public class PortfolioListAdapter extends RecyclerView.Adapter<PortfolioListAdap
         final PortfolioModel portfolio = portfolioList.get(position);
 
         holder.valueamt.setText(portfolio.getShareBalance()+"");
-        holder.nameofcompany.setText(portfolio.getCompany());
+        holder.nameofcompany.setText(portfolio.getCompany().getName());
         holder.lastprice.setText(portfolio.getPreviousPrice() + "");
     }
 

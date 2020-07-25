@@ -95,8 +95,9 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
             deleteSavedUser();
             finish();
         }
-
-        getUserProfile();
+        else {
+            getUserProfile();
+        }
 
         // If MainActivity is reached without the user being logged in, redirect to the Login
         // Activity
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
                 }
                 userProfile = response.body();
                 showdetail(userProfile.getFullName());
-                getBalanceDetail(userProfile.get_id());
+                getBalanceDetail(userProfile);
                 refresh(5000);
             }
 
@@ -198,9 +199,9 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
         return userProfile;
     }
 
-    public void getBalanceDetail(final String id){
+    public void getBalanceDetail(final UserModel user){
         BalanceAPI balanceAPI = RetrofitUrl.getInstance().create(BalanceAPI.class);
-        Call<BalanceModel> balanceCall = balanceAPI.getBalanceDetail(RetrofitUrl.token, id);
+        Call<BalanceModel> balanceCall = balanceAPI.getBalanceDetail(RetrofitUrl.token, user.get_id());
 
         balanceCall.enqueue(new Callback<BalanceModel>() {
             @Override
@@ -211,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
                 }
                 userBalance = response.body();
                 if(userBalance == null){
-                    createBalance(id);
+                    createBalance(user);
                 }
                 showAmt(userBalance.getvCoinBalance());
 
@@ -224,8 +225,8 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
         });
     }
 
-    public void createBalance(String id){
-        BalanceModel model = new BalanceModel(100000f, 100000f, 100000f, 0f, id);
+    public void createBalance(UserModel userModel){
+        BalanceModel model = new BalanceModel(100000f, 100000f, 100000f, 0f, userModel);
         userBalance = model;
         BalanceAPI balanceAPI = RetrofitUrl.getInstance().create(BalanceAPI.class);
         Call<Void> balanceCall = balanceAPI.createBalance(RetrofitUrl.token, model);
@@ -259,10 +260,10 @@ public class MainActivity extends AppCompatActivity implements MenuItem.OnMenuIt
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if(item.getItemId() == R.id.nav_logout){
+            deleteSavedUser();
+            RetrofitUrl.token = "Bearer ";
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
-            RetrofitUrl.token = "Bearer ";
-            deleteSavedUser();
             finish();
         }
         drawer.closeDrawer(GravityCompat.START);
